@@ -1,0 +1,136 @@
+//STEP 1. Import required packages
+import java.sql.*;
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.util.Bytes;
+
+public class HBaseExam {
+	
+	static final String e_names[]={"A_NAME2","A_NAME3","A_NAME4","A_NAME5"};
+	static int iterator=0;
+	
+   
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://localhost/CAKART_development";
+
+  
+   static final String USER = "root";
+   static final String PASS = "spm";
+   
+   public static void main(String[] args) {
+   Connection conn = null;
+   Statement stmt = null;
+   try{
+     
+      Class.forName("com.mysql.jdbc.Driver");
+
+     
+      System.out.println("Connecting to a selected database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+      System.out.println("Connected database successfully...");
+      
+      
+      System.out.println("Creating statement...");
+      stmt = conn.createStatement();
+
+      String sql = "SELECT b.id, b.title, exam.name as e_name, p.name as p_name, a.name as a_name  from books b, publishers p, authors a, product_cats c , cats exam where  b.publisher_id = p.id and  b.author_id = a.id and  c.product_type = 'Book' and c.product_id = b.id and c.cat_id is not null and  exam.id = c.cat_id order by b.id";
+      ResultSet rs = stmt.executeQuery(sql);
+      
+      Configuration config = HBaseConfiguration.create();
+
+      // Instantiating HTable class
+      HTable hTable = new HTable(config, "H1");
+      //STEP 5: Extract data from result set
+String comp="NOTA";
+
+      while(rs.next()){
+    	  String st=rs.getString("b.id");
+    	  System.out.println(comp + "   " +st);
+    	  Put p = new Put(Bytes.toBytes(st)); 
+    	  if(st!=comp){iterator=0;
+         //Retrieve by column name
+        // String id  = rs.getString("b.id");
+        
+         //int age = rs.getInt("age");
+         String title=rs.getString("b.title");
+         p.add(Bytes.toBytes("Title"),
+        	      Bytes.toBytes("B_Title"),Bytes.toBytes(title));
+        // String first = rs.getString("name");
+         String publisher= rs.getString("p_name");
+         p.add(Bytes.toBytes("Publisher"),
+        	      Bytes.toBytes("P_Name"),Bytes.toBytes(publisher));
+         String author= rs.getString("a_name");
+         p.add(Bytes.toBytes("Author"),
+       	      Bytes.toBytes("A_Name"),Bytes.toBytes(author));
+         String ex= rs.getString("e_name");
+         p.add(Bytes.toBytes("Exam"),
+       	      Bytes.toBytes("E_Name"),Bytes.toBytes(ex));
+        
+        
+         
+         hTable.put(p);
+         System.out.println("data inserted");
+         //Display values
+         System.out.print("ID: " + st);
+        
+         System.out.println(", Book Name: " + title);
+         System.out.println(", PUB_Name: " + publisher);
+         System.out.println(", A_Name: " + author);
+         System.out.println(", E_Name: " +ex);
+      }
+    	  else{
+
+      
+      //Put p = new Put(Bytes.toBytes(st));
+
+      // Updating a cell value
+      String ex= rs.getString("e_name");
+      p.add(Bytes.toBytes("Exam"),
+    	      Bytes.toBytes(e_names[iterator]),Bytes.toBytes(ex));
+   
+   System.out.println(",e_name[iterator]: "+ex);
+        
+		   iterator++;
+		   // Saving the put Instance to the HTable.
+      hTable.put(p);
+      
+      System.out.print("ID: " + st);
+      }comp=st;
+     }
+      
+      System.out.println("data Updated");
+      hTable.close();rs.close();}
+   
+      // closing HTable
+      
+    
+   catch(SQLException se){
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e){
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally{
+      //finally block used to close resources
+      try{
+         if(stmt!=null)
+            conn.close();
+      }catch(SQLException se){
+      }// do nothing
+      try{
+         if(conn!=null)
+            conn.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+      
+   }//end try
+  
+   System.out.println("Goodbye!");
+}//end main
+}//end JDBCExample

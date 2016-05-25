@@ -1,0 +1,159 @@
+//STEP 1. Import required packages
+import java.sql.*;
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.util.Bytes;
+
+public class HBase1 {
+	
+	//static final String e_names[]={"E_NAME2","E_NAME3","E_NAME4","E_NAME5","E_NAME5","E_NAME6","E_NAME7","E_NAME8","E_NAME9","E_NAME10","E_NAME11","E_NAME12","E_NAME13","E_NAME14","E_NAME15","E_NAME16","E_NAME17","E_NAME18","E_NAME19","E_NAME20","E_NAME21","E_NAME22","E_NAME23","E_NAME24","E_NAME25","E_NAME26","E_NAME27","E_NAME28","E_NAME29","E_NAME30","E_NAME31",};
+	//static final String s_names[]={"S_NAME2","S_NAME3","S_NAME4","S_NAME5","S_NAME5","S_NAME6","S_NAME7","S_NAME8","S_NAME9","S_NAME10","S_NAME11","S_NAME12","S_NAME13","S_NAME14","S_NAME15","S_NAME16","S_NAME17","S_NAME18","S_NAME19","S_NAME20","S_NAME21","S_NAME22","S_NAME23","S_NAME24","S_NAME25","S_NAME26","S_NAME27","S_NAME28","S_NAME29","S_NAME30","S_NAME31",};
+	static String s_a ="0123456789abcdefghijklmnopqrstuvwxyz";
+	static String e_a ="0123456789abcdefghijklmnopqrstuvwxyz";
+	static int iterator1=0;
+	static int iterator2=0;
+	//static 
+	static String str="Nul";
+   static String store1="Nul";
+   static String store2="Nul";
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://localhost/CAKART_development";
+
+  
+   static final String USER = "root";
+   static final String PASS = "spm";
+   
+   public static void main(String[] args) {
+   Connection conn = null;
+   Statement stmt = null;
+   try{
+     
+      Class.forName("com.mysql.jdbc.Driver");
+
+     
+      System.out.println("Connecting to a selected database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+      System.out.println("Connected database successfully...");
+      
+      
+      System.out.println("Creating statement...");
+      stmt = conn.createStatement();
+
+      String sql = "SELECT b.id as book_id, b.title as book_title, exam.name as exam_name, sub.name as subject, p.name as publisher, a.name as author from books b,publishers p, authors a, product_cats c ,product_cats cs,  cats exam, catcs sub where b.publisher_id = p.id and b.author_id = a.id and c.product_type = 'Book' and c.product_id = b.id and c.cat_id is not null and exam.id = c.cat_id and cs.product_type = 'Book' and cs.product_id = b.id and cs.catc_id is not null and  sub.id = cs.catc_id order by b.id,exam_name,subject";
+      ResultSet rs = stmt.executeQuery(sql);
+      
+      Configuration config = HBaseConfiguration.create();
+
+      // Instantiating HTable class
+      HTable hTable = new HTable(config, "H2");
+      //STEP 5: Extract data from result set
+
+      String comp="NOTA";
+      while(rs.next()){
+    	  String st=rs.getString("book_id");
+    	 // System.out.println(comp + "   " +st);
+    	  
+    	  if(st.equals(comp)==false){//System.out.println("Hey ");
+    		  Put p = new Put(Bytes.toBytes(st)); iterator1=0;iterator2=0;
+        
+         String title=rs.getString("book_title");
+         p.add(Bytes.toBytes("book_title"),
+        	      Bytes.toBytes("B_Title"),Bytes.toBytes(title));
+      
+         String publisher= rs.getString("publisher");
+         p.add(Bytes.toBytes("publisher"),
+        	      Bytes.toBytes("P_Name"),Bytes.toBytes(publisher));
+         String author= rs.getString("author");
+         p.add(Bytes.toBytes("author"),
+       	      Bytes.toBytes("A_Name"),Bytes.toBytes(author));
+         String ex= rs.getString("exam_name");
+         p.add(Bytes.toBytes("exam_name"),
+       	      Bytes.toBytes("E_Name"),Bytes.toBytes(ex));
+         String sub= rs.getString("subject");
+         p.add(Bytes.toBytes("subject"),
+       	      Bytes.toBytes("s_Name"),Bytes.toBytes(sub));
+        
+        
+         
+         hTable.put(p);
+         System.out.println("data inserted");
+        
+         System.out.print("ID: " + st);
+        
+         System.out.println(", Book Name: " + title);
+         System.out.println(", PUB_Name: " + publisher);
+         System.out.println(", A_Name: " + author);
+         System.out.println(", E_Name: " +ex);
+         System.out.println(", S_Name: " +sub);
+         store1=ex;
+         store2=sub;
+      }
+    	  else{
+    		  Put p = new Put(Bytes.toBytes(comp));
+    //System.out.println("EQUAL:");
+    		  
+      String ex= rs.getString("exam_name");
+      String sub= rs.getString("subject");
+     if (ex.equals(store1)==true){iterator1=0;
+     String s = "" + s_a[iterator2];
+     /* p.add(Bytes.toBytes("Exam"),
+    	      Bytes.toBytes(e_names[iterator]),Bytes.toBytes(ex));*/
+      p.add(Bytes.toBytes("subject"),
+       	      Bytes.toBytes(s),Bytes.toBytes(sub));
+      iterator2++;
+      }
+     else{iterator2=0;
+    	 p.add(Bytes.toBytes("exam_name"),
+       	      Bytes.toBytes(e_a[iterator1]),Bytes.toBytes(ex));
+    	 iterator1++;
+     }
+   
+   
+		 
+      hTable.put(p);
+      
+     /* System.out.print("ID: " + st);
+      System.out.println(",e_name[iterator]: "+ex);
+      System.out.println(",s_name[iterator]: "+sub);*/
+      
+	  
+      
+      }comp=st;
+     }
+      
+      System.out.println("data Updated");
+      hTable.close();rs.close();}
+   
+      // closing HTable
+      
+    
+   catch(SQLException se){
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e){
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally{
+      //finally block used to close resources
+      try{
+         if(stmt!=null)
+            conn.close();
+      }catch(SQLException se){
+      }// do nothing
+      try{
+         if(conn!=null)
+            conn.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+      
+   }//end try
+  
+   System.out.println("Goodbye!");
+}//end main
+}//end JDBCExample
