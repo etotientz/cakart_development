@@ -2,3 +2,7 @@ select b.id as book_id, b.title as book_title, exam.name as exam_name, sub.name 
 
 
 select b.id as book_id from books b,publishers p, authors a, product_cats c ,product_cats cs,  cats exam, catcs sub where b.publisher_id = p.id and b.author_id = a.id and c.product_type = 'Book' and c.product_id = b.id and c.cat_id is not null and exam.id = c.cat_id and cs.product_type = 'Book' and cs.product_id = b.id and cs.catc_id is not null and  sub.id = cs.catc_id order by book_id;
+
+
+
+select b.id as book_id, exam.name as exam_name, sub.name as subject from books b,publishers p, authors a, product_cats c ,product_cats cs,  cats exam, catcs sub where b.publisher_id = p.id and b.author_id = a.id and c.product_type = 'Book' and c.product_id = b.id and c.cat_id is not null and exam.id = c.cat_id and cs.product_type = 'Book' and cs.product_id = b.id and cs.catc_id is not null and  sub.id = cs.catc_id and exam.name='CA Final' and sub.name ='DT';
