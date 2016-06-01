@@ -54,9 +54,9 @@ public class Slug {
       String comp="NOTA";
       while(rs.next()){
     	  String st=rs.getString("slug");
-    	  if(st.toLowerCase().contains("ca-final") && st.toLowerCase().contains("direct-tax"))
-    	
-    	  {
+    	  if(st.toLowerCase().contains("indirect-tax"))continue;
+    	  if(st.toLowerCase().contains("ca-final") && st.toLowerCase().contains("direct-tax")){
+    	  
     	  if(st.equals(comp)==false){
     		  
     		  if(co==1){ Put p = new Put(Bytes.toBytes(comp));
@@ -95,21 +95,15 @@ public class Slug {
     		  
     		  co=1;
     		  String id1=rs.getString("user_id");
-    	  
-
-    	  
-    		  
-    		  //String s="";
-    		 // Put p = new Put(Bytes.toBytes(comp));
           userid.add(id1);
          
      
       }
-        comp=st;}
+        comp=st;}}
      
       
       System.out.println("data Updated");
-      hTable.close();rs.close();}}
+      hTable.close();rs.close();}
    
       // closing HTable
       
