@@ -1,0 +1,1 @@
+=concatenate("insert into user_book (user_id, slug,date) values ('",G16,"','",H16,"','",A16,"');")
