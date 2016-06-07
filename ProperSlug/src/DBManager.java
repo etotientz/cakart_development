@@ -15,21 +15,18 @@ public class DBManager {
 	   public static ArrayList<ArrayList<String>> getResult (String query) {
 		   Connection conn = null;
 		   Statement stmt = null;
-		  //System.out.println("The query is "+query);
 		   
 		   ArrayList<ArrayList<String>> lst = new ArrayList<ArrayList<String>>();
 		   try{
-			   
-			   //System.out.println("The query is "+);
 		      //STEP 2: Register JDBC driver
 		      Class.forName("com.mysql.jdbc.Driver");
 	
 		      //STEP 3: Open a connection
-		      //System.out.println("Connecting to database...");
+		      System.out.println("Connecting to database...");
 		      conn = DriverManager.getConnection(DB_URL,USER,PASS);
 	
 		      //STEP 4: Execute a query
-		      //System.out.println("Creating statement...");
+		      System.out.println("Creating statement...");
 		      stmt = conn.createStatement();
 		     // String sql;
 		    //  sql = "SELECT user_id, slug, date, hour , min FROM user_slug";
@@ -41,19 +38,15 @@ public class DBManager {
 	
 		      //STEP 5: Extract data from result set
 		      while(rs.next()){
-		    	  //System.out.println(rs);
 		    	  ArrayList<String> tmp = new ArrayList<String>();
-		    	  for (int i = 1; i <= colCount; i++) {
-		    		  //System.out.println(i);
-		    		  
+		    	  for (int i = 0; i < colCount; i++) {
 		    		  tmp.add(rs.getString(i));
 					
 		    	  }
-		    	 // System.out.println("the row added is " + tmp);
 		    	  lst.add(tmp);
 		         
 		      }
-		      
+
 		      rs.close();
 		      stmt.close();
 		      conn.close();
