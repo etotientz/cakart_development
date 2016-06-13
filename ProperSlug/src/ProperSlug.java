@@ -37,6 +37,8 @@ public class ProperSlug {
    static String duplicate;
    static String rowkeyid;
    static String rowkey;
+   
+   
    public static void main(String[] args)throws IOException {
 	   Configuration config = HBaseConfiguration.create();
 

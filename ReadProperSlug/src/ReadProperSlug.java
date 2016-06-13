@@ -29,6 +29,9 @@ import java.util.*;
 
 public class ReadProperSlug{
 
+	
+	//cldrdata.jar  dnsns.jar  icedtea-sound.jar  jaccess.jar  localedata.jar  nashorn.jar  sunec.jar  sunjce_provider.jar  sunpkcs11.jar  zipfs.jar
+
    public static void main(String[] args) throws IOException, Exception{
    
       // Instantiating Configuration class
@@ -37,7 +40,8 @@ public class ReadProperSlug{
       // Instantiating HTable class
       HTable table = new HTable(config, "cakart");
       
-    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("asset"),Bytes.toBytes("BOOKID"),CompareFilter.CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes("589")));
+    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("asset"),Bytes.toBytes("BOOKID"),CompareFilter.CompareOp.EQUAL, 
+    		new BinaryComparator(Bytes.toBytes("589")));
 
       //Get g = new Get(Bytes.toBytes("User"));
       Scan s = new Scan();
@@ -56,7 +60,7 @@ public class ReadProperSlug{
     	           String holdvalue = new String(kv.getValue());
     	           System.out.println(" " +holdvalue);}
     	        }
-    	System.out.println("Found row: " + i);
+    	//System.out.println("Found row: " + i);
     	
     	 
     	// The other approach is to use a foreach loop. Scanners are
