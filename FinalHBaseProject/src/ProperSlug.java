@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.lang.*;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.io.*;
+import java.text.*;
 import java.io.IOException;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -31,7 +33,7 @@ import com.google.api.services.analytics.model.GaData;
 import com.suphalam.util.ConfigGA;
 
 import test.com.suphalam.util.ConfigGATest;
-
+import java.util.*;
 public class ProperSlug {
 	private static final transient Logger log = Logger.getLogger(ProperSlug.class);
 	
@@ -49,9 +51,16 @@ public class ProperSlug {
    static String duplicate;
    static String rowkeyid;
    static String rowkey;
+   //static String modifiedDate;
+   
+   
    
    
    public static void main(String[] args)throws IOException {
+	   SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd") ;
+	    Date today=new Date();
+	   String modifiedDate=format1.format(today);
+	   System.out.println(modifiedDate);
 	   Configuration config = HBaseConfiguration.create();
 	   Analytics analytics = null;
 	   try {
@@ -64,7 +73,7 @@ public class ProperSlug {
 	   String profile = ConfigGA.getFirstProfileId(analytics);
    	log.info(" the profile is - "+profile);
    	GaData results = analytics.data().ga()
-   	        .get("ga:" + profile, "2016-06-14", "2016-06-14", "ga:pageviews")
+   	        .get("ga:" + profile, modifiedDate, modifiedDate, "ga:pageviews")
    	        .setDimensions("ga:date,ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")
    	        .setFilters("ga:pagePath=~/details$,ga:pagePath=~^/courses/,ga:pagePath=~^/blog/,ga:pagePath=~^/downloads/")
    	        .setSort("-ga:date,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
@@ -73,14 +82,14 @@ public class ProperSlug {
 	   
 	   
 	   
-	   HBaseAdmin admin = new HBaseAdmin(config);
+	  // HBaseAdmin admin = new HBaseAdmin(config);
 
 	      // Instantiating table descriptor class
-	      HTableDescriptor tableDescriptor = new
-	      HTableDescriptor(TableName.valueOf("cakart"));
+	    ////  HTableDescriptor tableDescriptor = new
+	     // HTableDescriptor(TableName.valueOf("cakart"));
 
 	      // Adding column families to table descriptor
-	      tableDescriptor.addFamily(new HColumnDescriptor("user"));
+	     /* tableDescriptor.addFamily(new HColumnDescriptor("user"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("asset"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("exam"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("subject"));
@@ -89,10 +98,10 @@ public class ProperSlug {
 	      tableDescriptor.addFamily(new HColumnDescriptor("blog"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("channel"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("browser"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("downloads"));
+	      tableDescriptor.addFamily(new HColumnDescriptor("downloads"));*/
 
 	      // Execute the table through admin
-	      admin.createTable(tableDescriptor);
+	      //admin.createTable(tableDescriptor);
 	      // Instantiating HTable class
 	      HTable hTable = new HTable(config, "cakart");
 	   duplicate="NULL";
