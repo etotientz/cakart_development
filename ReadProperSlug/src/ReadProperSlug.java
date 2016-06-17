@@ -39,15 +39,20 @@ public class ReadProperSlug{
 
       // Instantiating HTable class
       HTable table = new HTable(config, "cakart");
+      HTable table1 = new HTable(config, "cookie");
       
-    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("asset"),Bytes.toBytes("BOOKID"),CompareFilter.CompareOp.EQUAL, 
-    		new BinaryComparator(Bytes.toBytes("589")));
+    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("asset"),Bytes.toBytes("BOOK"),CompareFilter.CompareOp.EQUAL, 
+    		new BinaryComparator(Bytes.toBytes("1")));
+    Filter filter1 = new SingleColumnValueFilter(Bytes.toBytes("channel"),Bytes.toBytes("TYPE"),CompareFilter.CompareOp.EQUAL, 
+    		new BinaryComparator(Bytes.toBytes("Email")));
 
       //Get g = new Get(Bytes.toBytes("User"));
       Scan s = new Scan();
+      Scan s1=new Scan();
       s.setFilter(filter); 
-      s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("USERID"));
-      s.addColumn(Bytes.toBytes("asset"), Bytes.toBytes("BOOKID"));
+      s.setFilter(filter1);
+      s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
+      s.addColumn(Bytes.toBytes("channel"), Bytes.toBytes("TYPE"));
       ResultScanner scanner = table.getScanner(s);
       try {
     	// Scanners return Result instances.
@@ -58,9 +63,21 @@ public class ReadProperSlug{
     	// print out the row we found and the columns we were looking
     		for (KeyValue kv : rr.raw()) {i++;
     	           String holdvalue = new String(kv.getValue());
-    	           System.out.println(" " +holdvalue);}
-    	        }
-    	//System.out.println("Found row: " + i);
+    	           System.out.println(" " +holdvalue);
+    	           Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
+    	           		new BinaryComparator(Bytes.toBytes(holdvalue)));
+    	           s1.setFilter(filter2);
+    	           s1.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
+    	           s1.addColumn(Bytes.toBytes("user"), Bytes.toBytes("USERID"));
+    	           ResultScanner scanner1 = table1.getScanner(s1);for (Result rr1 = scanner1.next(); rr1 != null; rr1 = scanner1.next()) {
+    	           	// print out the row we found and the columns we were looking
+    	       		for (KeyValue kv1 : rr1.raw()) {i++;
+    	       	           String holdvalue1 = new String(kv1.getValue());
+    	       	           System.out.println(" " +holdvalue1);
+    	       	        }
+    	           System.out.println("b");
+    	        }}}
+    	System.out.println("Found row: " + i);
     	
     	 
     	// The other approach is to use a foreach loop. Scanners are
@@ -71,8 +88,8 @@ public class ReadProperSlug{
     	} finally {
     	// Make sure you close your scanners when you are done!
     	// Thats why we have it inside a try/finally clause
-    	scanner.close();
-    	}
+    	scanner.close();}
+    	
     	}
     	}
 

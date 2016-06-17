@@ -45,14 +45,14 @@ public class ProperSlug {
 	   
 	   
 	   
-	   HBaseAdmin admin = new HBaseAdmin(config);
+	  // HBaseAdmin admin = new HBaseAdmin(config);
 
 	      // Instantiating table descriptor class
-	      HTableDescriptor tableDescriptor = new
-	      HTableDescriptor(TableName.valueOf("cakart"));
+	   //   HTableDescriptor tableDescriptor = new
+	     // HTableDescriptor(TableName.valueOf("cakart"));
 
 	      // Adding column families to table descriptor
-	      tableDescriptor.addFamily(new HColumnDescriptor("user"));
+	    /*  tableDescriptor.addFamily(new HColumnDescriptor("user"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("asset"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("exam"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("subject"));
@@ -66,7 +66,8 @@ public class ProperSlug {
 	      // Execute the table through admin
 	      admin.createTable(tableDescriptor);
 	      // Instantiating HTable class
-	      HTable hTable = new HTable(config, "cakart");
+	      HTable hTable = new HTable(config, "cakart");*/
+	   HTable hTable = new HTable(config, "cakart");
 	   duplicate="NULL";
 	   String sql = "SELECT id,path,channel,browser,date,min FROM user_email order by id,date,min";
 	   
@@ -90,7 +91,7 @@ public class ProperSlug {
 		   //String type=arrayList.get(5);
 		   //System.out.println(id + " "+slug+" "+date + " "+ hour+" "+ min);
 		  
-         rowkeyid=id+date+min;
+         rowkeyid=date+min+id;
         // System.out.println(rowkeyid);
          if(duplicate.equals(rowkeyid)==true){
         	 count+=1;
@@ -149,6 +150,8 @@ public class ProperSlug {
 	    		  if (book != null && book.size() > 0){
 	    			  ArrayList<String> tmp = book.get(0);
 	    			  String book_id = tmp.get(0);
+	    			  p.add(Bytes.toBytes("asset"),
+	    				      Bytes.toBytes("BOOK "),Bytes.toBytes("1"));
 	    			  // adding values using add() method
 				      // accepts column family name, qualifier/row name ,value
 				      p.add(Bytes.toBytes("asset"),

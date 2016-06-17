@@ -74,9 +74,9 @@ public class ProperSlug {
    	log.info(" the profile is - "+profile);
    	GaData results = analytics.data().ga()
    	        .get("ga:" + profile, modifiedDate, modifiedDate, "ga:pageviews")
-   	        .setDimensions("ga:date,ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")
+   	        .setDimensions("ga:date,ga:pagePath,ga:dimension2,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")
    	        .setFilters("ga:pagePath=~/details$,ga:pagePath=~^/courses/,ga:pagePath=~^/blog/,ga:pagePath=~^/downloads/")
-   	        .setSort("-ga:date,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
+   	        .setSort("-ga:date,ga:dimension2,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
    	        .setMaxResults(10000)
    	        .execute();
 	   
@@ -121,23 +121,24 @@ public class ProperSlug {
 		   List<String> eachRow = (List<String>)iterator.next();
 		   //System.out.println("\n" +i);i++;
 	   
-		   String id = eachRow.get(2);
+		   String id = eachRow.get(3);
 		  /* String sql1 = "SELECT cust_type from user_detail where Id LIKE '"+id+"'";  
 		   ArrayList<ArrayList<String>>cust_type=DBManager.getResult(sql1);
 		   for(ArrayList<String>arraycust:cust_type)
 			   cu_type=arraycust.get(0);*/
 		   
 		   String slug = eachRow.get(1);
-		   String channel = eachRow.get(3);
-		   String browser = eachRow.get(4);
+		   String channel = eachRow.get(4);
+		   String browser = eachRow.get(5);
 		   String date = eachRow.get(0);
+		   String user_id=eachRow.get(2);
 		   //String hour = eachRow.get(5);
-		   String min = eachRow.get(5);
+		   String min = eachRow.get(6);
 		   //String type=eachRow.get(5);
 		   //System.out.println(id + " "+slug+" "+date + " "+ hour+" "+ min);
 		  if(id.equals("unknown-visitor"))
 			  continue;
-         rowkeyid=id+date+min;
+         rowkeyid=date+min+id;
         // System.out.println(rowkeyid);
          if(duplicate.equals(rowkeyid)==true){
         	 count+=1;
@@ -166,6 +167,8 @@ public class ProperSlug {
 			 Put p = new Put(Bytes.toBytes(rowkey)); 
 			  p.add(Bytes.toBytes("user"),
 				      Bytes.toBytes("COOKIEID"),Bytes.toBytes(id));
+			//  p.add(Bytes.toBytes("user"),
+				     // Bytes.toBytes("USERID"),Bytes.toBytes(user_id));
 			  //p.add(Bytes.toBytes("user"),
 				//      Bytes.toBytes("TYPE"),Bytes.toBytes(cu_type));
 			  p.add(Bytes.toBytes("channel"),
@@ -196,6 +199,8 @@ public class ProperSlug {
 	    		  if (book != null && book.size() > 0){
 	    			  ArrayList<String> tmp = book.get(0);
 	    			  String book_id = tmp.get(0);
+	    			  p.add(Bytes.toBytes("asset"),
+	    				      Bytes.toBytes("BOOK "),Bytes.toBytes("1"));
 	    			  // adding values using add() method
 				      // accepts column family name, qualifier/row name ,value
 				      p.add(Bytes.toBytes("asset"),
