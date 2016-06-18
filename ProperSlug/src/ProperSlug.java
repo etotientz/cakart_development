@@ -40,28 +40,28 @@ public class ProperSlug {
    
    
    public static void main(String[] args)throws IOException {
-	   Configuration config = HBaseConfiguration.create();
+	  Configuration config = HBaseConfiguration.create();
 
 	   
 	   
 	   
-	   HBaseAdmin admin = new HBaseAdmin(config);
+	 //  HBaseAdmin admin = new HBaseAdmin(config);
 
 	      // Instantiating table descriptor class
-	      HTableDescriptor tableDescriptor = new
-	      HTableDescriptor(TableName.valueOf("cakart"));
+	  //    HTableDescriptor tableDescriptor = new
+	  //    HTableDescriptor(TableName.valueOf("cakart"));
 
 	      // Adding column families to table descriptor
-	      tableDescriptor.addFamily(new HColumnDescriptor("user"));
+	     /* tableDescriptor.addFamily(new HColumnDescriptor("user"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("asset"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("exam"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("subject"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("group"));
 	      tableDescriptor.addFamily(new HColumnDescriptor("QA"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("blog"));
+	      tableDescriptor.addFamily(new HColumnDescriptor("blog"));*/
 
 	      // Execute the table through admin
-	      admin.createTable(tableDescriptor);
+	    //  admin.createTable(tableDescriptor);
 	      // Instantiating HTable class
 	      HTable hTable = new HTable(config, "cakart");
 	   duplicate="NULL";
@@ -101,9 +101,13 @@ public class ProperSlug {
          
         // System.out.println(rowkey + "\n");
 			 String[] parts = slug.split("/");
-			 String slug_part = parts[2];
-			 //System.out.println("" + slug_part+ '\n');
 			 String prefix = parts[1];
+			 if((prefix.equals("books")==false))continue;
+		
+			 String slug_part = parts[2];
+			
+			 //System.out.println("" + slug_part+ '\n');
+			 
 			 //System.out.println("" +prefix);
 			
 			 
@@ -204,7 +208,7 @@ public class ProperSlug {
 	    
 	    	
 		
-	   }//System.out.println(i);
+			   }//System.out.println(i);
 	   hTable.close();
 }//end main
 }//end FirstExample
