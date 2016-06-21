@@ -43,33 +43,33 @@ public class ConfigGA {
 	 */
 	public synchronized void analyticsConfiProperties() throws ConfigFileLoadingFailedExcep{
 		
-		System.out.println(" 46   ConfigGA class");
+		//System.out.println(" 46   ConfigGA class");
 		if(ConfigGA.props != null && ConfigGA.props.getProperty("KEY_FILE_LOCATION") != null){
 			System.out.println("  48   If condition of ConfigGA class");
 			log.info("The config props file is already loaded, same instance is returned");
 		}
 		else{
 			try{
-				System.out.println(" 53   try of else block of ConfigGA class");
+				//System.out.println(" 53   try of else block of ConfigGA class");
 				ClassLoader classLoader = ConfigGA.class.getClassLoader();
-				System.out.println("55   try of else block of ConfigGA class classloader");
+				//System.out.println("55   try of else block of ConfigGA class classloader");
 		        File classpathRoot = new File(classLoader.getResource("").getPath());
-		        System.out.println("57    try of else block of ConfigGA class classloader file");
+		       // System.out.println("57    try of else block of ConfigGA class classloader file");
 		        ConfigGA.classPath = classpathRoot.getPath();
-		        System.out.println(" 59    try of else block of ConfigGA class classpath");
+		       // System.out.println(" 59    try of else block of ConfigGA class classpath");
 		        
 				ConfigGA.props = new Properties();
 				String propPath = ConfigGA.classPath+"/resources/configuration/analytics.properties";
-				System.out.println("63   try of else block of ConfigGA class propPath");
+				//System.out.println("63   try of else block of ConfigGA class propPath");
 				
 				log.info("Going to load the properties file from class folder:- " + propPath);
-				System.out.println("66   try of else block of ConfigGA class log info");
+				//System.out.println("66   try of else block of ConfigGA class log info");
 				ConfigGA.props.load(new FileInputStream(propPath));
-				System.out.println("68   try of else block of ConfigGA class prop load");
+				//System.out.println("68   try of else block of ConfigGA class prop load");
 				log.info("file loaded now, check value :-" + ConfigGA.props.getProperty("KEY_FILE_LOCATION"));
-				System.out.println("70    try of else block of ConfigGA class log info");
+				//System.out.println("70    try of else block of ConfigGA class log info");
 			}
-			catch(Exception ex){System.out.println(" 72   catch of else block of ConfigGA class");
+			catch(Exception ex){//System.out.println(" 72   catch of else block of ConfigGA class");
 				throw new ConfigFileLoadingFailedExcep("Unable to load the analytics properties file which has all the oAuth related keys", ex);
 			}//end-of-catch
 		}//end-of-else
@@ -80,7 +80,7 @@ public class ConfigGA {
 	 * get the first profile id
 	 */
 	public static String getFirstProfileId(Analytics analytics) throws IOException {
-		System.out.println("getFirstProfile method");
+		//System.out.println("getFirstProfile method");
 
 	    // Get the first view (profile) ID for the authorized user.
 	    String profileId = null;
@@ -89,10 +89,10 @@ public class ConfigGA {
 	    com.google.api.services.analytics.model.Accounts accounts = analytics.management().accounts().list().execute();
 
 	    if (accounts.getItems().isEmpty()) {
-	    	System.out.println("92   getFirstProfile empty");
+	    	//System.out.println("92   getFirstProfile empty");
 	    	log.error("No accounts is found");
 	    } else {
-	    	System.out.println("95   else of log error");
+	    	//System.out.println("95   else of log error");
 	      String firstAccountId = accounts.getItems().get(0).getId();
 
 	      // Query for the list of properties associated with the first account.
@@ -101,27 +101,27 @@ public class ConfigGA {
 
 	      if (properties.getItems().isEmpty()) {
 	    	  log.error("No Webproperties found");
-	    	  System.out.println("104   No Webproperties found");
+	    	//  System.out.println("104   No Webproperties found");
 	      } else {
 	        String firstWebpropertyId = properties.getItems().get(0).getId();
 	       
-	        System.out.println("108   else of No Webproperties found");
+	        //System.out.println("108   else of No Webproperties found");
 	        // Query for the list views (profiles) associated with the property.
 	        com.google.api.services.analytics.model.Profiles profiles = analytics.management().profiles()
 	            .list(firstAccountId, firstWebpropertyId).execute();
-	        System.out.println(" 112   else of No Webproperties found google api");
+	       // System.out.println(" 112   else of No Webproperties found google api");
 	        if (profiles.getItems().isEmpty()) { 
-	        	System.out.println("114  if after api block");
+	        	//System.out.println("114  if after api block");
 	        	log.error("No views (profiles) found");
 	        } else {
 	          // Return the first (view) profile associated with the property.
 	          profileId = profiles.getItems().get(0).getId();
-	          System.out.println("119   else after api block");
+	         // System.out.println("119   else after api block");
 	        }
-	      }System.out.println("121   terminate");
+	      }//System.out.println("121   terminate");
 	    }
 	    log.info("profile id found - " + profileId);
-	    System.out.println("124   before return ");
+	    //System.out.println("124   before return ");
 	    return profileId;
 	    
 	    
@@ -134,9 +134,9 @@ public class ConfigGA {
 	 * Initialize analytics
 	 */
 	public static Analytics initializeAnalytics() throws GAInitializationFailedExcep {
-		System.out.println("137    initialize analytics");
+		//System.out.println("137    initialize analytics");
 		
-		System.out.println("139     --------");
+		//System.out.println("139     --------");
 		ConfigGA configGA = null;
 		try{
 				configGA = 		new ConfigGA();
@@ -157,7 +157,7 @@ public class ConfigGA {
         
 		
 		try{
-			System.out.println(" 160   try 1st");
+			//System.out.println(" 160   try 1st");
 			 // Initializes an authorized analytics service object.
 
 		    // Construct a GoogleCredential object with the service account email
@@ -170,7 +170,7 @@ public class ConfigGA {
 		        .setServiceAccountPrivateKeyFromP12File(new File(ConfigGA.classPath+"/"+KEY_FILE_LOCATION))
 		        .setServiceAccountScopes(AnalyticsScopes.all())
 		        .build();
-		    System.out.println("173    before return 1st");
+		   // System.out.println("173    before return 1st");
 		    // Construct the Analytics service object.
 		    return new Analytics.Builder(httpTransport, JSON_FACTORY, credential)
 		        .setApplicationName(APPLICATION_NAME).build();

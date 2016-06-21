@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.lang.*;
+import java.util.*;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,59 +52,78 @@ public class ProperSlug {
    static String duplicate;
    static String rowkeyid;
    static String rowkey;
+   static String alldate,hours;
    //static String modifiedDate;
    
    
    
    
    public static void main(String[] args)throws IOException {
+	 
 	   SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd") ;
 	    Date today=new Date();
 	   String modifiedDate=format1.format(today);
-	   System.out.println(modifiedDate);
+	  Calendar rightNow = Calendar.getInstance();
+	  int hour = rightNow.get(Calendar.HOUR_OF_DAY);
+	
+	   String[] dates = modifiedDate.split("-");
+	   
+	   int y = Integer.parseInt(dates[2]);
+	   //int strt=arr[1];
+	  // System.out.println(y);
 	   Configuration config = HBaseConfiguration.create();
 	   Analytics analytics = null;
 	   try {
 			analytics = ConfigGA.initializeAnalytics();
-			System.out.println(" 28    MAIN CLASS");
+			//System.out.println(" 28    MAIN CLASS");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	   String profile = ConfigGA.getFirstProfileId(analytics);
-   	log.info(" the profile is - "+profile);
+  	log.info(" the profile is - "+profile);
+  	HTable hTable = new HTable(config, "cakartproject");
+	   
+	   for(int pday=17;pday<=y;pday++){
+		   if(pday<10){ alldate="2016-06-0"+pday;
+		  }
+		   else{alldate="2016-06-"+pday;}
+		   
+		   
+	  
+	  
+	   System.out.println(alldate);
+	   for(int phour=0;phour<hour;phour++){
+		   if(phour<10)
+		   hours="0"+phour;
+		   else
+		   hours=""+phour;
+		   
+		   System.out.println(hours);
+		 
+	   
+	   
+	  // System.out.println(modifiedDate+ "  " + hour);
+	  
+	   
+	 
+   	String momentdate="ga:date=="+alldate;
+    String momenthour=",ga:hour=="+hours;
+    String moment=momentdate+momenthour;
    	GaData results = analytics.data().ga()
-   	        .get("ga:" + profile, modifiedDate, modifiedDate, "ga:pageviews")
-   	        .setDimensions("ga:date,ga:pagePath,ga:dimension2,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")
-   	        .setFilters("ga:pagePath=~/details$,ga:pagePath=~^/courses/,ga:pagePath=~^/blog/,ga:pagePath=~^/downloads/")
-   	        .setSort("-ga:date,ga:dimension2,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
+   	        .get("ga:" + profile,alldate,alldate, "ga:pageviews")
+   	        .setDimensions("ga:date,ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")//ga:deviceCategory")
+   	        .setFilters(moment)
+   	        //.setFilters(moment
+   	       // .setSort("-ga:date,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
    	        .setMaxResults(10000)
    	        .execute();
+ 
 	   
 	   
 	   
-	  // HBaseAdmin admin = new HBaseAdmin(config);
-
-	      // Instantiating table descriptor class
-	    ////  HTableDescriptor tableDescriptor = new
-	     // HTableDescriptor(TableName.valueOf("cakart"));
-
-	      // Adding column families to table descriptor
-	     /* tableDescriptor.addFamily(new HColumnDescriptor("user"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("asset"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("exam"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("subject"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("group"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("QA"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("blog"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("channel"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("browser"));
-	      tableDescriptor.addFamily(new HColumnDescriptor("downloads"));*/
-
-	      // Execute the table through admin
-	      //admin.createTable(tableDescriptor);
-	      // Instantiating HTable class
-	      HTable hTable = new HTable(config, "cakart");
+	 
+	      
 	   duplicate="NULL";
 	  // String sql = "SELECT id,path,channel,browser,date,min FROM user_email order by id,date,min";
 	   
@@ -116,29 +136,31 @@ public class ProperSlug {
 	    	 int i= 0;
 	  
 	  // String cu_type="Null";
-	   for (Iterator<List<String>> iterator = results.getRows().iterator(); iterator.hasNext();) {
+	   for (Iterator<List<String>> iterator = results.getRows().iterator(); iterator.hasNext();)
+	   {
 		   
 		   List<String> eachRow = (List<String>)iterator.next();
 		   //System.out.println("\n" +i);i++;
 	   
-		   String id = eachRow.get(3);
+		   //String id = eachRow.get(3);
 		  /* String sql1 = "SELECT cust_type from user_detail where Id LIKE '"+id+"'";  
 		   ArrayList<ArrayList<String>>cust_type=DBManager.getResult(sql1);
 		   for(ArrayList<String>arraycust:cust_type)
 			   cu_type=arraycust.get(0);*/
 		   
 		   String slug = eachRow.get(1);
-		   String channel = eachRow.get(4);
-		   String browser = eachRow.get(5);
+		   String channel = eachRow.get(3);
+		   String browser = eachRow.get(4);
 		   String date = eachRow.get(0);
-		   String user_id=eachRow.get(2);
+		   String cookie_id=eachRow.get(2);
 		   //String hour = eachRow.get(5);
-		   String min = eachRow.get(6);
+		   String min = eachRow.get(5);
 		   //String type=eachRow.get(5);
-		   //System.out.println(id + " "+slug+" "+date + " "+ hour+" "+ min);
-		  if(id.equals("unknown-visitor"))
-			  continue;
-         rowkeyid=date+min+id;
+		   System.out.println(cookie_id + " "+slug+" "+date +" "+ min);
+		 // if(id.equals("unknown-visitor"))
+			 // continue;
+         rowkeyid=date+min+cookie_id;
+         
         // System.out.println(rowkeyid);
          if(duplicate.equals(rowkeyid)==true){
         	 count+=1;
@@ -153,20 +175,27 @@ public class ProperSlug {
         		 duplicate=rowkeyid;
          
         // System.out.println(rowkey + "\n");
-			 String[] parts = slug.split("/");
+        		 String a1="/books/";String a2="/courses/";String a3="/blog/";
+        		 String a4="/downloads/";
+        		 
+        		 System.out.println(slug+ "\n"+moment +"\n" );
+			
+			if(slug.contains(a1))//||slug.contains(a2)||slug.contains(a3)||slug.contains(a4))
+			{ String[] parts = slug.split("/");
 			 String prefix = parts[1];
-			 if(prefix.equals("blog")|| prefix.equals("downloads")){
-				 continue;}
+			 System.out.println("PREFIX:"+prefix );
+			 if(parts[2]=="NULL"){continue;}
 			String slug_part = parts[2];
+			System.out.println("SlUG :"+slug_part );
 			 //System.out.println("" + slug_part+ '\n');
 			
 			 //System.out.println("" +prefix);
 			
 			 
-			 UserSlugVO user = new UserSlugVO(id,slug,date,min,channel,browser,prefix) ;
+			 UserSlugVO user = new UserSlugVO(cookie_id,slug,date,min,channel,browser,prefix) ;
 			 Put p = new Put(Bytes.toBytes(rowkey)); 
 			  p.add(Bytes.toBytes("user"),
-				      Bytes.toBytes("COOKIEID"),Bytes.toBytes(id));
+				      Bytes.toBytes("COOKIEID"),Bytes.toBytes(cookie_id));
 			//  p.add(Bytes.toBytes("user"),
 				     // Bytes.toBytes("USERID"),Bytes.toBytes(user_id));
 			  //p.add(Bytes.toBytes("user"),
@@ -246,8 +275,9 @@ public class ProperSlug {
 	    	    				      p.add(Bytes.toBytes("group"),
 	    	    				      Bytes.toBytes(h),Bytes.toBytes(group_id));
 	    	    	    			  System.out.println("GROUPID : "+group_id);}
-	    	    	    			  hTable.put(p);
-	    	    	    		      System.out.println("data inserted");
+	    	    	    			 System.out.println("data inserted");
+	    	    	    			 
+	    	    	    		     
 	    	    	    			  
 							}
 	    	    			  //ArrayList<String> tmp1 = book1.get(0);
@@ -271,13 +301,13 @@ public class ProperSlug {
 	    		  //get the book id
 	    		  //based on book id you try to get the exam/subject etc
 	    		  //then insert this record to HBase
-	    	  }
+	    		  }
 			
 			
 			
 			
 			
-			if(prefix.equals("courses")){
+			/*if(prefix.equals("courses")){
 				
 				
 				
@@ -363,15 +393,15 @@ public class ProperSlug {
 	    		  //get the book id
 	    		  //based on book id you try to get the exam/subject etc
 	    		  //then insert this record to HBase
-	    	  }
+	    	  }*/
 			
 	    
 	    	
 		
-	   }System.out.println(i);} else {
+			 hTable.put(p);	} }System.out.println(i);  } else {
 		      log.info("No results found");
 		    }
-	  //  hTable.close();
-   }//end main
+	  // 
+	  } }  hTable.close(); }//end main
 	    
 }//end FirstExample

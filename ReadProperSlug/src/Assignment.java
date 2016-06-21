@@ -41,27 +41,18 @@ public class Assignment{
       HTable table = new HTable(config, "cakart");
       HTable table1 = new HTable(config, "cookie");
       
-   // Filter filter = new SingleColumnValueFilter(Bytes.toBytes("exam"),Bytes.toBytes("EXAMID A"),CompareFilter.CompareOp.EQUAL, 
-    	//	new BinaryComparator(Bytes.toBytes("1")));
+    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("exam"),Bytes.toBytes("EXAMID"),CompareFilter.CompareOp.EQUAL, 
+    		new BinaryComparator(Bytes.toBytes("1")));
     Filter filter1 = new SingleColumnValueFilter(Bytes.toBytes("subject"),Bytes.toBytes("SUBID A"),CompareFilter.CompareOp.EQUAL, 
-    		new BinaryComparator(Bytes.toBytes("28")));
-    Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("subject"),Bytes.toBytes("SUBID B"),CompareFilter.CompareOp.EQUAL, 
-    		new BinaryComparator(Bytes.toBytes("28")));
-    Filter filter3 = new SingleColumnValueFilter(Bytes.toBytes("subject"),Bytes.toBytes("SUBID C"),CompareFilter.CompareOp.EQUAL, 
-    		new BinaryComparator(Bytes.toBytes("28")));
+    		new BinaryComparator(Bytes.toBytes("165")));
 
       //Get g = new Get(Bytes.toBytes("User"));
       Scan s = new Scan();
       Scan s1=new Scan();
-     // s.setFilter(filter); 
+      s.setFilter(filter); 
       s.setFilter(filter1);
-      s.setFilter(filter2);
-      s.setFilter(filter3);
       s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
-      //s.addColumn(Bytes.toBytes("subject"));//, Bytes.toBytes("SUBID A"));
-      s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID A"));
-      s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID B"));
-      s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID C"));
+      s.addColumn(Bytes.toBytes("channel"), Bytes.toBytes("TYPE"));
       ResultScanner scanner = table.getScanner(s);
       try {
     	// Scanners return Result instances.
@@ -72,11 +63,10 @@ public class Assignment{
     	// print out the row we found and the columns we were looking
     		for (KeyValue kv : rr.raw()) {i++;
     	           String holdvalue = new String(kv.getValue());
-    	           if(holdvalue.equals("NULL")==false){
     	           System.out.println(" " +holdvalue);
-    	           /*Filter filter4 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
+    	           Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
     	           		new BinaryComparator(Bytes.toBytes(holdvalue)));
-    	           s1.setFilter(filter4);
+    	           s1.setFilter(filter2);
     	           s1.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
     	           s1.addColumn(Bytes.toBytes("user"), Bytes.toBytes("USERID"));
     	           ResultScanner scanner1 = table1.getScanner(s1);for (Result rr1 = scanner1.next(); rr1 != null; rr1 = scanner1.next()) {
@@ -84,9 +74,9 @@ public class Assignment{
     	       		for (KeyValue kv1 : rr1.raw()) {i++;
     	       	           String holdvalue1 = new String(kv1.getValue());
     	       	           System.out.println(" " +holdvalue1);
-    	       	        }*/
-    	           System.out.println("b");}
-    	        }}
+    	       	        }
+    	           System.out.println("b");
+    	        }}}
     	System.out.println("Found row: " + i);
     	
     	 
