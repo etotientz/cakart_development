@@ -82,7 +82,7 @@ public class ProperSlug {
 		}
 	   String profile = ConfigGA.getFirstProfileId(analytics);
   	log.info(" the profile is - "+profile);
-  	HTable hTable = new HTable(config, "cakartproject");
+  	HTable hTable = new HTable(config, "cakart1");
 	   
 	   for(int pday=17;pday<=y;pday++){
 		   if(pday<10){ alldate="2016-06-0"+pday;
@@ -93,7 +93,7 @@ public class ProperSlug {
 	  
 	  
 	   System.out.println(alldate);
-	   for(int phour=0;phour<hour;phour++){
+	   for(int phour=14;phour<hour;phour++){
 		   if(phour<10)
 		   hours="0"+phour;
 		   else
@@ -156,9 +156,9 @@ public class ProperSlug {
 		   //String hour = eachRow.get(5);
 		   String min = eachRow.get(5);
 		   //String type=eachRow.get(5);
-		   System.out.println(cookie_id + " "+slug+" "+date +" "+ min);
-		 // if(id.equals("unknown-visitor"))
-			 // continue;
+		//   System.out.println(cookie_id + " "+slug+" "+date +" "+ min);
+		  if(cookie_id.equals("unknown-visitor"))
+			 continue;
          rowkeyid=date+min+cookie_id;
          
         // System.out.println(rowkeyid);
@@ -178,15 +178,17 @@ public class ProperSlug {
         		 String a1="/books/";String a2="/courses/";String a3="/blog/";
         		 String a4="/downloads/";
         		 
-        		 System.out.println(slug+ "\n"+moment +"\n" );
+        		 //System.out.println("----------"+slug+ "\n"+moment +"\n" );
 			
-			if(slug.contains(a1))//||slug.contains(a2)||slug.contains(a3)||slug.contains(a4))
+			if(slug.contains(a1)||slug.contains(a2)||slug.contains(a3)||slug.contains(a4))
 			{ String[] parts = slug.split("/");
+			int size=parts.length;if(size>2){
 			 String prefix = parts[1];
-			 System.out.println("PREFIX:"+prefix );
-			 if(parts[2]=="NULL"){continue;}
+			 System.out.println("0 index:"+parts[0]+"hi");
+			 System.out.println("PREFIX 1 index:"+prefix );
+			// if(parts[2]=="NULL"){continue;}
 			String slug_part = parts[2];
-			System.out.println("SlUG :"+slug_part );
+			System.out.println("SlUG part[2]:"+slug_part );
 			 //System.out.println("" + slug_part+ '\n');
 			
 			 //System.out.println("" +prefix);
@@ -196,10 +198,13 @@ public class ProperSlug {
 			 Put p = new Put(Bytes.toBytes(rowkey)); 
 			  p.add(Bytes.toBytes("user"),
 				      Bytes.toBytes("COOKIEID"),Bytes.toBytes(cookie_id));
-			//  p.add(Bytes.toBytes("user"),
-				     // Bytes.toBytes("USERID"),Bytes.toBytes(user_id));
-			  //p.add(Bytes.toBytes("user"),
-				//      Bytes.toBytes("TYPE"),Bytes.toBytes(cu_type));
+			  p.add(Bytes.toBytes("user"),
+				      Bytes.toBytes("DATE"),Bytes.toBytes(date));
+			  p.add(Bytes.toBytes("user"),
+				      Bytes.toBytes("MIN"),Bytes.toBytes(min));
+			  p.add(Bytes.toBytes("user"),
+				      Bytes.toBytes("URL"),Bytes.toBytes(slug));
+			
 			  p.add(Bytes.toBytes("channel"),
 				      Bytes.toBytes("TYPE"),Bytes.toBytes(channel));
 			  p.add(Bytes.toBytes("browser"),
@@ -209,14 +214,15 @@ public class ProperSlug {
 				  p.add(Bytes.toBytes("blog"),
 					      Bytes.toBytes("TYPE"),Bytes.toBytes("1"));
 			  if(prefix.equals("downloads"))
-				  p.add(Bytes.toBytes("downloads"),
-					      Bytes.toBytes("TYPE"),Bytes.toBytes("1"));
+				  p.add(Bytes.toBytes("asset_type"),
+					      Bytes.toBytes("DOWNLOAD"),Bytes.toBytes("1"));
 			 // hTable.put(p);
 			if(prefix.equals("books")){
 				
 				
 				
-				
+				 p.add(Bytes.toBytes("asset_type"),
+					      Bytes.toBytes("BOOK"),Bytes.toBytes("1"));
 				
 
 			    
@@ -228,15 +234,11 @@ public class ProperSlug {
 	    		  if (book != null && book.size() > 0){
 	    			  ArrayList<String> tmp = book.get(0);
 	    			  String book_id = tmp.get(0);
-	    			  p.add(Bytes.toBytes("asset"),
-	    				      Bytes.toBytes("BOOK "),Bytes.toBytes("1"));
-	    			  // adding values using add() method
-				      // accepts column family name, qualifier/row name ,value
-				      p.add(Bytes.toBytes("asset"),
-				      Bytes.toBytes("BOOKID"),Bytes.toBytes(book_id));
-				    //  hTable.put(p);
-				     // System.out.println("data inserted");
-	    			//  String book_title = tmp.get(1);
+	    			  p.add(Bytes.toBytes("asset_id"),
+	    				      Bytes.toBytes("ID"),Bytes.toBytes(book_id));
+	    			 
+				   
+	    			
 	    			 // System.out.println("BOOK_ID " +book_id);
 	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+book_id+"' from product_detail p where '"+book_id+"'=p.product_id"
 	    		    	 		+ " and p.p_type='Book'"; 	  
@@ -307,9 +309,10 @@ public class ProperSlug {
 			
 			
 			
-			/*if(prefix.equals("courses")){
+			if(prefix.equals("courses")){
 				
-				
+				 p.add(Bytes.toBytes("asset_type"),
+					      Bytes.toBytes("COURSE"),Bytes.toBytes("1"));
 				
 				
 				
@@ -325,12 +328,9 @@ public class ProperSlug {
 	    			  String course_id = tmp.get(0);
 	    			  // adding values using add() method
 				      // accepts column family name, qualifier/row name ,value
-				      p.add(Bytes.toBytes("asset"),
-				      Bytes.toBytes("COURSEID"),Bytes.toBytes(course_id));
-				    //  hTable.put(p);
-				     // System.out.println("data inserted");
-	    			//  String book_title = tmp.get(1);
-	    			 // System.out.println("BOOK_ID " +book_id);
+				      p.add(Bytes.toBytes("asset_id"),
+				      Bytes.toBytes("ID"),Bytes.toBytes(course_id));
+				   
 	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+course_id+"' from product_detail p where '"+course_id+"'=p.product_id"
 	    		    	 		+ " and p.p_type='Course'"; 	  
 	    	    		  ArrayList<ArrayList<String>> course1 = DBManager.getResult(productQuery);
@@ -393,12 +393,94 @@ public class ProperSlug {
 	    		  //get the book id
 	    		  //based on book id you try to get the exam/subject etc
 	    		  //then insert this record to HBase
-	    	  }*/
+	    	  }
 			
-	    
+			if(prefix.equals("downloads")){
+				
+				 p.add(Bytes.toBytes("asset_type"),
+					      Bytes.toBytes("DOWNLOAD"),Bytes.toBytes("1"));
+				
+				
+	    		  String downQuery = "Select id,title from downloads where slug LIKE '"+slug_part+"' limit 1";
+	    		  
+	    		  ArrayList<ArrayList<String>> down = DBManager.getResult(downQuery);
+	    		  if (down != null && down.size() > 0){
+	    			  ArrayList<String> tmp = down.get(0);
+	    			  String download_id = tmp.get(0);
+	    			  // adding values using add() method
+				      // accepts column family name, qualifier/row name ,value
+				      p.add(Bytes.toBytes("asset_id"),
+				      Bytes.toBytes("ID"),Bytes.toBytes(download_id));
+				    //  hTable.put(p);
+				     // System.out.println("data inserted");
+	    			//  String book_title = tmp.get(1);
+	    			 // System.out.println("BOOK_ID " +book_id);
+	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+download_id+"' from product_detail p where '"+download_id+"'=p.product_id"
+	    		    	 		+ " and p.p_type='Download'"; 	  
+	    	    		  ArrayList<ArrayList<String>> course1 = DBManager.getResult(productQuery);
+	    	    		  //System.out.println("The books array is "+ book1);
+	    	    		  if (course1 != null && course1.size() > 0){
+	    	    			  char e='A';char e2='A';char e3='A';
+	    	    			  for (ArrayList<String> arrayList2 : course1) {
+	    	    				  
+	    	    				  if(arrayList2.get(0)!=null){
+	    	    	    		      String exm_id=arrayList2.get(0);
+	    	    	    		      
+	    	    	        		  String f="EXAMID "+ e;e++;
+	    	    	    		      
+	    	    	    		      // adding values using add() method
+	    	    				      // accepts column family name, qualifier/row name ,value
+	    	    				      p.add(Bytes.toBytes("exam"),
+	    	    				      Bytes.toBytes(f),Bytes.toBytes(exm_id));
+	    	    	    		      System.out.println("EXAMID :" +exm_id);}
+	    	    	    			 if(arrayList2.get(1)!=null){
+	    	    	    				  
+	    	    	    			  String sub_id = arrayList2.get(1);
+	    	    	    			  String g="SUBID "+ e2;e2++;
+	    	    	    			  
+	    	    	    			  // adding values using add() method
+	    	    				      // accepts column family name, qualifier/row name ,value
+	    	    				      p.add(Bytes.toBytes("subject"),
+	    	    				      Bytes.toBytes(g),Bytes.toBytes(sub_id));
+	    	    	    			  System.out.println("SUBID :"+sub_id);}
+	    	    	    			 if(arrayList2.get(2)!=null){ 
+	    	    	    				 
+	    	    	    			  String group_id = arrayList2.get(2);
+	    	    	    			  String h="GROUPID "+ e2;e2++;
+	    	    	    			  // adding values using add() method
+	    	    				      // accepts column family name, qualifier/row name ,value
+	    	    				      p.add(Bytes.toBytes("group"),
+	    	    				      Bytes.toBytes(h),Bytes.toBytes(group_id));
+	    	    	    			  System.out.println("GROUPID : "+group_id);}
+	    	    	    			  hTable.put(p);
+	    	    	    		      System.out.println("data inserted");
+	    	    	    			  
+							}
+	    	    			  //ArrayList<String> tmp1 = book1.get(0);
+	    	    			  
+	    	    			
+	    	    			 
+	    	    			 
+	    	    			  
+	    	    			  
+	    	    			   }
+	    	    		  else{
+	    	    			  System.out.println("empty ");
+	    	    		  }
+	    			  
+	    			  
+	    		  }
+	    		  else{
+	    			  System.out.println("the book slug not available :- " +slug_part );
+	    		  }
+	    		  
+	    		  //get the book id
+	    		  //based on book id you try to get the exam/subject etc
+	    		  //then insert this record to HBase
+	    	  }
 	    	
 		
-			 hTable.put(p);	} }System.out.println(i);  } else {
+			 hTable.put(p);	} }}System.out.println(i);  } else {
 		      log.info("No results found");
 		    }
 	  // 
