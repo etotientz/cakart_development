@@ -38,11 +38,11 @@ import java.util.*;
 public class ProperSlug {
 	private static final transient Logger log = Logger.getLogger(ProperSlug.class);
 	
-	//private static final transient Logger log = Logger.getLogger(ProperSlug.class);
+	
    // JDBC driver name and database URL
    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
    static final String DB_URL = "jdbc:mysql://localhost/cakart";
-   //LinkedHashSet<String> extra = new LinkedHashSet();
+   
 
    //  Database credentials
    static final String USER = "root";
@@ -69,13 +69,13 @@ public class ProperSlug {
 	   String[] dates = modifiedDate.split("-");
 	   
 	   int y = Integer.parseInt(dates[2]);
-	   //int strt=arr[1];
+	  
 	  // System.out.println(y);
 	   Configuration config = HBaseConfiguration.create();
 	   Analytics analytics = null;
 	   try {
 			analytics = ConfigGA.initializeAnalytics();
-			//System.out.println(" 28    MAIN CLASS");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,7 +84,7 @@ public class ProperSlug {
   	log.info(" the profile is - "+profile);
   	HTable hTable = new HTable(config, "cakart1");
 	   
-	   for(int pday=17;pday<=y;pday++){
+	   for(int pday=20;pday<y;pday++){
 		   if(pday<10){ alldate="2016-06-0"+pday;
 		  }
 		   else{alldate="2016-06-"+pday;}
@@ -93,17 +93,18 @@ public class ProperSlug {
 	  
 	  
 	   System.out.println(alldate);
-	   for(int phour=14;phour<hour;phour++){
+	   for(int phour=00;phour<24;phour++){
 		   if(phour<10)
 		   hours="0"+phour;
 		   else
 		   hours=""+phour;
+		  
 		   
 		   System.out.println(hours);
 		 
 	   
 	   
-	  // System.out.println(modifiedDate+ "  " + hour);
+	  
 	  
 	   
 	 
@@ -114,7 +115,7 @@ public class ProperSlug {
    	        .get("ga:" + profile,alldate,alldate, "ga:pageviews")
    	        .setDimensions("ga:date,ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:nthMinute")//ga:deviceCategory")
    	        .setFilters(moment)
-   	        //.setFilters(moment
+   	      
    	       // .setSort("-ga:date,ga:dimension4,ga:browser,ga:channelGrouping,ga:nthMinute")
    	        .setMaxResults(10000)
    	        .execute();
@@ -176,13 +177,19 @@ public class ProperSlug {
          
         // System.out.println(rowkey + "\n");
         		 String a1="/books/";String a2="/courses/";String a3="/blog/";
-        		 String a4="/downloads/";
-        		 
+        		 String a4="/downloads/";String a5="ambassadors_account_dashboard";
+        		 String a6="-add-kart-virtual-view";
+        		 //String a7="/community.cakart.in/";
         		 //System.out.println("----------"+slug+ "\n"+moment +"\n" );
-			
-			if(slug.contains(a1)||slug.contains(a2)||slug.contains(a3)||slug.contains(a4))
-			{ String[] parts = slug.split("/");
-			int size=parts.length;if(size>2){
+        		 String[] parts = slug.split("/");
+     			int size=parts.length;
+     			if(size>2){ 
+			if(slug.contains(a1)||slug.contains(a2)||slug.contains(a3)||slug.contains(a4)||slug.contains(a5)||slug.contains(a6)||parts[1].matches("[0-9]+")||
+					parts[1].matches("jobs")||parts[1].matches("why2join")||
+					parts[1].matches("questions")||parts[1].matches("jobs")||parts[1].matches("ask")||parts[1].matches("unanswered")||
+					parts[1].matches("tag"))
+			{ Put p = new Put(Bytes.toBytes(rowkey)); 
+			System.out.println(slug);
 			 String prefix = parts[1];
 			 System.out.println("0 index:"+parts[0]+"hi");
 			 System.out.println("PREFIX 1 index:"+prefix );
@@ -193,9 +200,54 @@ public class ProperSlug {
 			
 			 //System.out.println("" +prefix);
 			
-			 
+			
 			 UserSlugVO user = new UserSlugVO(cookie_id,slug,date,min,channel,browser,prefix) ;
-			 Put p = new Put(Bytes.toBytes(rowkey)); 
+			
+			// if (.matches("[0-9]+") && text.length() > 2) {
+			 
+			 if(prefix.equals("jobs")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("JOBFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals("tag")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("TAGFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals("ask")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("ASKFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals("questions")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("QFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals("unanswered")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("UANSFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals("why2join")==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("QnA"),
+					      Bytes.toBytes("JOINFLAG"),Bytes.toBytes("1"));}
+				 
+				 if(prefix.matches("[0-9]+")){System.out.println("---------Hey----------"+ slug_part);
+					// String value=parts[2];
+					 p.add(Bytes.toBytes("QnA"),
+						      Bytes.toBytes("QUESTIONFLAG"),Bytes.toBytes("1"));}
+			 if(prefix.equals(a5)==true){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("ambassador"),
+					      Bytes.toBytes("AMBASSADORID"),Bytes.toBytes(slug_part));
+				 
+			 }
+			 if(slug.contains(a6)){System.out.println("---------Hey----------"+ slug_part);
+				// String value=parts[2];
+				 p.add(Bytes.toBytes("ADD-KART"),
+					      Bytes.toBytes("FLAG"),Bytes.toBytes("1"));
+				 
+			 }
+			 
+
 			  p.add(Bytes.toBytes("user"),
 				      Bytes.toBytes("COOKIEID"),Bytes.toBytes(cookie_id));
 			  p.add(Bytes.toBytes("user"),
@@ -237,11 +289,28 @@ public class ProperSlug {
 	    			  p.add(Bytes.toBytes("asset_id"),
 	    				      Bytes.toBytes("ID"),Bytes.toBytes(book_id));
 	    			 
-				   
+	    			  String AuthorQuery = "Select author_id from books where '"+book_id+"'=books.id";
+	    		    	 		//+ " and p.product_type='Book'"; 	  
+	    	    		  ArrayList<ArrayList<String>> book2 = DBManager.getResult(AuthorQuery);
+	    	    		  //System.out.println("The books array is "+ book1);
+	    	    		  if (book2 != null && book2.size() > 0){
+	    	    			  char e='A';//char e2='A';char e3='A';
+	    	    			  for (ArrayList<String> arrayList2 : book2) {
+	    	    				  
+	    	    				  if(arrayList2.get(0)!=null){
+	    	    	    		      String exm_id=arrayList2.get(0);
+	    	    	    		      
+	    	    	        		  String f="AUTHORID "+ e;e++;
+	    	    	    		      
+	    	    	    		      // adding values using add() method
+	    	    				      // accepts column family name, qualifier/row name ,value
+	    	    				      p.add(Bytes.toBytes("AUTHOR"),
+	    	    				      Bytes.toBytes(f),Bytes.toBytes(exm_id));
+	    	    	    		      System.out.println("AUTHORID :" +exm_id);}}}
 	    			
 	    			 // System.out.println("BOOK_ID " +book_id);
-	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+book_id+"' from product_detail p where '"+book_id+"'=p.product_id"
-	    		    	 		+ " and p.p_type='Book'"; 	  
+	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+book_id+"' from product_cats p where '"+book_id+"'=p.product_id"
+	    		    	 		+ " and p.product_type='Book'"; 	  
 	    	    		  ArrayList<ArrayList<String>> book1 = DBManager.getResult(productQuery);
 	    	    		  //System.out.println("The books array is "+ book1);
 	    	    		  if (book1 != null && book1.size() > 0){
@@ -322,17 +391,40 @@ public class ProperSlug {
 				 //System.out.println("HEY BOOKS");
 	    		  String courseQuery = "Select course_id,course_title from course_slug where course_slug LIKE '"+slug_part+"' limit 1";
 	    		  
+	    		  
+	    		  
 	    		  ArrayList<ArrayList<String>> course = DBManager.getResult(courseQuery);
 	    		  if (course != null && course.size() > 0){
 	    			  ArrayList<String> tmp = course.get(0);
 	    			  String course_id = tmp.get(0);
+	    			  
 	    			  // adding values using add() method
 				      // accepts column family name, qualifier/row name ,value
 				      p.add(Bytes.toBytes("asset_id"),
 				      Bytes.toBytes("ID"),Bytes.toBytes(course_id));
+				      
+				      String FacultyQuery = "Select faculty_id from courses where courses.id LIKE '"+course_id+"'";
+		    	 		//+ " and p.product_type='Book'"; 	  
+	  		  ArrayList<ArrayList<String>> book2 = DBManager.getResult(FacultyQuery);
+	  		  //System.out.println("The books array is "+ book1);
+	  		  if (book2 != null && book2.size() > 0){
+	  			  char e='A';//char e2='A';char e3='A';
+	  			  for (ArrayList<String> arrayList2 : book2) {
+	  				  
+	  				  if(arrayList2.get(0)!=null){
+	  	    		      String exm_id=arrayList2.get(0);
+	  	    		      
+	  	        		  String f="FACULTYID "+ e;e++;
+	  	    		      
+	  	    		      // adding values using add() method
+	  				      // accepts column family name, qualifier/row name ,value
+	  				      p.add(Bytes.toBytes("FACULTY"),
+	  				      Bytes.toBytes(f),Bytes.toBytes(exm_id));
+	  	    		      System.out.println("FACULTYID :" +exm_id);}}}
+		    		  
 				   
-	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+course_id+"' from product_detail p where '"+course_id+"'=p.product_id"
-	    		    	 		+ " and p.p_type='Course'"; 	  
+	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+course_id+"' from product_cats p where '"+course_id+"'=p.product_id"
+	    		    	 		+ " and p.product_type='Course'"; 	  
 	    	    		  ArrayList<ArrayList<String>> course1 = DBManager.getResult(productQuery);
 	    	    		  //System.out.println("The books array is "+ book1);
 	    	    		  if (course1 != null && course1.size() > 0){
@@ -396,6 +488,8 @@ public class ProperSlug {
 	    	  }
 			
 			if(prefix.equals("downloads")){
+				if(parts[2].equals("new")){ p.add(Bytes.toBytes("uploads"),
+					      Bytes.toBytes("FLAG"),Bytes.toBytes("1"));}else{
 				
 				 p.add(Bytes.toBytes("asset_type"),
 					      Bytes.toBytes("DOWNLOAD"),Bytes.toBytes("1"));
@@ -415,8 +509,8 @@ public class ProperSlug {
 				     // System.out.println("data inserted");
 	    			//  String book_title = tmp.get(1);
 	    			 // System.out.println("BOOK_ID " +book_id);
-	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+download_id+"' from product_detail p where '"+download_id+"'=p.product_id"
-	    		    	 		+ " and p.p_type='Download'"; 	  
+	    			  String productQuery = "Select cat_id,catc_id,catb_id,'"+download_id+"' from product_cats p where '"+download_id+"'=p.product_id"
+	    		    	 		+ " and p.product_type='Download'"; 	  
 	    	    		  ArrayList<ArrayList<String>> course1 = DBManager.getResult(productQuery);
 	    	    		  //System.out.println("The books array is "+ book1);
 	    	    		  if (course1 != null && course1.size() > 0){
@@ -478,7 +572,7 @@ public class ProperSlug {
 	    		  //based on book id you try to get the exam/subject etc
 	    		  //then insert this record to HBase
 	    	  }
-	    	
+			}
 		
 			 hTable.put(p);	} }}System.out.println(i);  } else {
 		      log.info("No results found");
