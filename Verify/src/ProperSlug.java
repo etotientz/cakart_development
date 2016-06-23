@@ -86,7 +86,7 @@ public class ProperSlug {
 	
   	GaData results = analytics.data().ga()
    	        .get("ga:" + profile,"2016-06-20","2016-06-22", "ga:pageviews")
-   	        .setDimensions("ga:pagePath,ga:dimension4")
+   	        .setDimensions("ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:date,ga:nthMinute")
    	        .setFilters("ga:pagePath=~^/courses/;ga:pagePath=@advanced-management-accounting")
    	        .setMaxResults(10000)
    	        .execute();
@@ -111,7 +111,9 @@ public class ProperSlug {
 		   
 		   String slug = eachRow.get(0);
 		   String cookie = eachRow.get(1);
-		   System.out.println(slug+"\n"+cookie);
+		   String date=eachRow.get(4);
+		   String min=eachRow.get(5);
+		   System.out.println(slug+"\n"+cookie+"\n"+date+"\n"+min+"\n");
 		   
 		   
 	   } }

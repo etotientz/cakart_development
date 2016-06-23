@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
 
@@ -29,7 +30,7 @@ import java.util.*;
 import java.util.Collection;
 import java.util.Collection;
 import java.sql.Connection;
-
+import java.util.regex.Pattern;
 public class ReadProperSlug{
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	   static final String DB_URL = "jdbc:mysql://localhost/cakart";
@@ -54,8 +55,9 @@ public class ReadProperSlug{
       HTable table = new HTable(config, "cakart1");
      // HTable table1 = new HTable(config, "cookie");
       
-    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("URL"),CompareFilter.CompareOp.EQUAL, 
-    		new BinaryComparator(Bytes.toBytes("/courses/advanced-management-accounting")));
+    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("URL"),CompareFilter.CompareOp.EQUAL,
+    		new RegexStringComparator("^\\/courses\\/.*-advanced-management-accounting", Pattern.CASE_INSENSITIVE | Pattern.DOTALL));
+    		//new BinaryComparator(Bytes.toBytes("/courses/advanced-management-accounting")));
   // Filter filter1 = new SingleColumnValueFilter(Bytes.toBytes("asset_type"),Bytes.toBytes("TYPE"),CompareFilter.CompareOp.EQUAL, 
     		//new BinaryComparator(Bytes.toBytes("COURSE")));
 
@@ -64,24 +66,24 @@ public class ReadProperSlug{
       
       
       
-    /*  FilterList list = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+     /* FilterList list = new FilterList(FilterList.Operator.MUST_PASS_ONE);
       SingleColumnValueFilter filter1 = new SingleColumnValueFilter(
     		 Bytes.toBytes("asset_id"),Bytes.toBytes("ID"),CompareFilter.CompareOp.EQUAL, 
     		    		new BinaryComparator(Bytes.toBytes("12")));
-      list.add(filter1);
+      list.addFilter(filter1);
       SingleColumnValueFilter filter2 = new SingleColumnValueFilter(
-      	Bytes.toBytes("asset_type"),Bytes.toBytes("TYPE"),CompareFilter.CompareOp.EQUAL, 
-		new BinaryComparator(Bytes.toBytes("COURSE")));
+      	Bytes.toBytes("asset_type"),Bytes.toBytes("COURSE"),CompareFilter.CompareOp.EQUAL, 
+		new BinaryComparator(Bytes.toBytes("1")));
       	
-      list.add(filter2);
+      list.addFilter(filter2);
       s.setFilter(list);*/
-      
+     // s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
       s.setFilter(filter);
       
      // Scan s1=new Scan();
      // s.setFilter(filter); 
       //s.setFilter(filter1);
-      //s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
+     
      // s.addColumn(Bytes.toBytes("channel"), Bytes.toBytes("TYPE"));
       ResultScanner scanner = table.getScanner(s);
       try {
@@ -90,9 +92,9 @@ public class ReadProperSlug{
     	// like so:
     	  int i=0;
     	for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-    		
+    		i++;
     	// print out the row we found and the columns we were looking
-    		for (KeyValue kv : rr.raw()) {i++;
+    		for (KeyValue kv : rr.raw()) {
     	           String holdvalue = new String(kv.getValue());
     	           System.out.println(" " +holdvalue);
     	          /* Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
@@ -106,7 +108,7 @@ public class ReadProperSlug{
     	       	           String holdvalue1 = new String(kv1.getValue());
     	       	           System.out.println(" " +holdvalue1);
     	       	        }*/
-    	           System.out.println("b");
+    	           //System.out.println("b");
     	        }}
     	System.out.println("Found row: " + i);
     	
