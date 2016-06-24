@@ -84,7 +84,7 @@ public class ProperSlug {
   	log.info(" the profile is - "+profile);
   	HTable hTable = new HTable(config, "cakart1");
 	   
-	   for(int pday=20;pday<y;pday++){
+	   for(int pday=1;pday<y;pday++){
 		   if(pday<10){ alldate="2016-06-0"+pday;
 		  }
 		   else{alldate="2016-06-"+pday;}
@@ -107,7 +107,8 @@ public class ProperSlug {
 	  
 	  
 	   
-	 
+	//filter is this ga:pagePath=~^/course/;ga:pagePath=@advance-management-accounting
+    //dim4 and page path
    	String momentdate="ga:date=="+alldate;
     String momenthour=",ga:hour=="+hours;
     String moment=momentdate+momenthour;
@@ -330,7 +331,7 @@ public class ProperSlug {
 	    	    	    			 if(arrayList2.get(1)!=null){
 	    	    	    				  
 	    	    	    			  String sub_id = arrayList2.get(1);
-	    	    	    			  String g="SUBID "+ e2;e2++;
+	    	    	    			  String g="SUBID "+ e3;e3++;
 	    	    	    			  
 	    	    	    			  // adding values using add() method
 	    	    				      // accepts column family name, qualifier/row name ,value
@@ -444,7 +445,7 @@ public class ProperSlug {
 	    	    	    			 if(arrayList2.get(1)!=null){
 	    	    	    				  
 	    	    	    			  String sub_id = arrayList2.get(1);
-	    	    	    			  String g="SUBID "+ e2;e2++;
+	    	    	    			  String g="SUBID "+ e3;e3++;
 	    	    	    			  
 	    	    	    			  // adding values using add() method
 	    	    				      // accepts column family name, qualifier/row name ,value
@@ -530,7 +531,7 @@ public class ProperSlug {
 	    	    	    			 if(arrayList2.get(1)!=null){
 	    	    	    				  
 	    	    	    			  String sub_id = arrayList2.get(1);
-	    	    	    			  String g="SUBID "+ e2;e2++;
+	    	    	    			  String g="SUBID "+ e3;e3++;
 	    	    	    			  
 	    	    	    			  // adding values using add() method
 	    	    				      // accepts column family name, qualifier/row name ,value

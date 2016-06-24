@@ -82,10 +82,10 @@ public class ProperSlug {
 		}
 	   String profile = ConfigGA.getFirstProfileId(analytics);
   	log.info(" the profile is - "+profile);
-  	HTable hTable = new HTable(config, "verifytab");
+  	//HTable hTable = new HTable(config, "verifytab");
 	
   	GaData results = analytics.data().ga()
-   	        .get("ga:" + profile,"2016-06-20","2016-06-22", "ga:pageviews")
+   	        .get("ga:" + profile,"2016-06-01","2016-06-23", "ga:pageviews")
    	        .setDimensions("ga:pagePath,ga:dimension4,ga:channelGrouping,ga:browser,ga:date,ga:nthMinute")
    	        .setFilters("ga:pagePath=~^/courses/;ga:pagePath=@advanced-management-accounting")
    	        .setMaxResults(10000)

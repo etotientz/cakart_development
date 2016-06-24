@@ -10,19 +10,6 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.filter.*;
-
-
-import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.RegexStringComparator;
-import org.apache.hadoop.hbase.filter.SubstringComparator;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.QualifierFilter;
-import org.apache.hadoop.hbase.filter.FamilyFilter;
-import org.apache.hadoop.hbase.filter.FilterList;
-import org.apache.hadoop.hbase.filter.ValueFilter;
-
-
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 
@@ -31,7 +18,7 @@ import java.util.Collection;
 import java.util.Collection;
 import java.sql.Connection;
 import java.util.regex.Pattern;
-public class ReadProperSlug{
+public class Check{
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	   static final String DB_URL = "jdbc:mysql://localhost/cakart";
 	   
@@ -46,8 +33,7 @@ public class ReadProperSlug{
    public static void main(String[] args) throws IOException, Exception{
 	   
 	   
-	   String Res="select course_id from course_slug where course_slug REGEXP '^advanced-management-accounting' ;";
-   
+	    
       // Instantiating Configuration class
       Configuration config = HBaseConfiguration.create();
 
@@ -55,32 +41,39 @@ public class ReadProperSlug{
       HTable table = new HTable(config, "cakart1");
      // HTable table1 = new HTable(config, "cookie");
       
-    Filter filter = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("URL"),CompareFilter.CompareOp.EQUAL,
-    		new RegexStringComparator("^\\/courses\\/.*-advanced-management-accounting.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL));
+    //Filter filter = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("URL"),CompareFilter.CompareOp.EQUAL,
+    		//new RegexStringComparator("^\\/courses\\/.*-advanced-management-accounting.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL));
     		//new BinaryComparator(Bytes.toBytes("/courses/advanced-management-accounting")));
   // Filter filter1 = new SingleColumnValueFilter(Bytes.toBytes("asset_type"),Bytes.toBytes("TYPE"),CompareFilter.CompareOp.EQUAL, 
     		//new BinaryComparator(Bytes.toBytes("COURSE")));
 
       //Get g = new Get(Bytes.toBytes("User"));
       Scan s = new Scan();
-      
-      
-      
-     FilterList list = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-     /* SingleColumnValueFilter filter1 = new SingleColumnValueFilter(
-    		 Bytes.toBytes("asset_id"),Bytes.toBytes("ID"),CompareFilter.CompareOp.EQUAL, 
-    		    		new BinaryComparator(Bytes.toBytes("12")));
-      list.addFilter(filter1);
-      SingleColumnValueFilter filter2 = new SingleColumnValueFilter(
-      	Bytes.toBytes("asset_type"),Bytes.toBytes("COURSE"),CompareFilter.CompareOp.EQUAL, 
-		new BinaryComparator(Bytes.toBytes("1")));
-      	
-      list.addFilter(filter2);
-      s.setFilter(list);*/
      // s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
-     // s.setFilter(filter);
-     list.addFilter(filter);
-     s.setFilter(list);
+     s.addColumn(Bytes.toBytes("asset_type"), Bytes.toBytes("COURSE"));
+     // s.addFamily(Bytes.toBytes("subject"));
+     // s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID A"));
+     // s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID B"));
+      //s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID C"));
+      //s.addColumn(Bytes.toBytes("subject"), Bytes.toBytes("SUBID D"));
+     // String mat=new RegexStringComparator("^SUBID.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+      FilterList list = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+      Filter  filter1 = new SingleColumnValueFilter(Bytes.toBytes("asset_type"),Bytes.toBytes("COURSE"),CompareFilter.CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes("1")));
+      list.addFilter(filter1);
+     Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("subject"),Bytes.toBytes("SUBID A"),CompareFilter.CompareOp.LESS,
+    		 new BinaryComparator(Bytes.toBytes("5")));
+      list.addFilter(filter2);
+     /* SingleColumnValueFilter filter2 = new SingleColumnValueFilter(
+    	      	Bytes.toBytes("subject"),Bytes.toBytes(CompareFilter.CompareOp.EQUAL,new RegexStringComparator("^SUBID.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL)),CompareFilter.CompareOp.LESS, 
+    			new BinaryComparator(Bytes.toBytes("5")));*/
+    //  FamilyFilter filterfam=new FamilyFilter(CompareFilter.CompareOp.EQUAL, 
+	    		//new BinaryComparator(Bytes.toBytes("subject")),ByteArrayComparable(Bytes.toBytes("subject")));
+      	
+      
+    s.setFilter(list);
+     // s.addColumn(Bytes.toBytes("user"), Bytes.toBytes("COOKIEID"));
+     // s.setFilter(list);
+      
      // Scan s1=new Scan();
      // s.setFilter(filter); 
       //s.setFilter(filter1);
@@ -97,6 +90,7 @@ public class ReadProperSlug{
     	// print out the row we found and the columns we were looking
     		for (KeyValue kv : rr.raw()) {
     	           String holdvalue = new String(kv.getValue());
+    	          
     	           System.out.println(" " +holdvalue);
     	          /* Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
     	           		new BinaryComparator(Bytes.toBytes(holdvalue)));
