@@ -93,9 +93,12 @@ public class ReadProperSlug{
     	// like so:
     	  int i=0;
     	for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-    		i++;
+    		i++;int i2=0;
     	// print out the row we found and the columns we were looking
-    		for (KeyValue kv : rr.raw()) {
+    		for (KeyValue kv : rr.raw()) {i2++;
+    			String header = //Bytes.toString(kv.getFamily()) + ":"
+						 Bytes.toString(kv.getQualifier()) + "\t";
+    			 System.out.println(" " +header + "HEADER  :"+ i2);
     	           String holdvalue = new String(kv.getValue());
     	           System.out.println(" " +holdvalue);
     	          /* Filter filter2 = new SingleColumnValueFilter(Bytes.toBytes("user"),Bytes.toBytes("COOKIEID"),CompareFilter.CompareOp.EQUAL, 
@@ -110,7 +113,8 @@ public class ReadProperSlug{
     	       	           System.out.println(" " +holdvalue1);
     	       	        }*/
     	           //System.out.println("b");
-    	        }}
+    	           
+    	        }System.out.println("i value: "+i);}
     	System.out.println("Found row: " + i);
     	
     	 
