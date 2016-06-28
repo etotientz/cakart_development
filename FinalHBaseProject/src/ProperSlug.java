@@ -84,10 +84,10 @@ public class ProperSlug {
   	log.info(" the profile is - "+profile);
   	HTable hTable = new HTable(config, "cakart1");
 	   
-	   for(int pday=21;pday<29;pday++){
-		   if(pday<10){ alldate="2016-02-0"+pday;
+	   for(int pday=1;pday<31;pday++){
+		   if(pday<10){ alldate="2016-01-0"+pday;
 		  }
-		   else{alldate="2016-02-"+pday;}
+		   else{alldate="2016-01-"+pday;}
 		   
 		   
 	  
