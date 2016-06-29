@@ -5,75 +5,34 @@
 	List<Exam> tmp =  MasterData.getExamList();
 	List<Group>gtemp=MasterDatagrp.getGrpList();
 	List<Subject>stemp=MasterDatasub.getSubList();
+	List<ResultRow> result = MasterDatagrp.fetchResult();
 
 	String book = request.getParameter("book");
 	String bookChecked = "";
+	String course = request.getParameter("course");
+	String courseChecked = "";
+	String download = request.getParameter("download");
+	String downloadChecked = "";
+	String blog= request.getParameter("blog");
+	String blogChecked = "";
+	String qna = request.getParameter("qna");
+	String qnaChecked = "";
 	if (book != null){ bookChecked = "checked";}
+	if (course!= null){ courseChecked = "checked";}
+	if (download != null){ downloadChecked = "checked";}
+	if (blog != null){ blogChecked = "checked";}
+	if (qna!=null){ qnaChecked="checked";}
 
 	String selectedExam = request.getParameter("exam");
-	String selectedGroup = request.getParameter("grp");
+	String selectedGroup = request.getParameter("group");
 	String selectedSubject = request.getParameter("subject");
 
 	//once all the criteria are captured, then call a function from java and display the result
 	String result = null;
-	if (book != null ) {
+	if (book != null || course!=null || download!=null ||blog!=null || qna!=null ) {
 		result = "this ismy result part";
-		//List<ResultRow> result = MasterDatagrp.fetchResult()
-	}
-
-	String course = request.getParameter("course");
-	String courseChecked = "";
-	if (course!= null){ courseChecked = "checked";}
-
-	String selectedExam = request.getParameter("exam");
-	String selectedGroup = request.getParameter("grp");
-	String selectedSubject= request.getParameter("subject");
-
-	//once all the criteria are captured, then call a function from java and display the result
-	String result = null;
-	if (course != null ) {
-		result = "this ismy result part";
-		//List<ResultRow> result = MasterDatagrp.fetchResult()
-	}
-
-	String download = request.getParameter("download");
-	String downloadChecked = "";
-	if (download != null){ downloadChecked = "checked";}
-
-	String selectedExam = request.getParameter("exam");
-
-	//once all the criteria are captured, then call a function from java and display the result
-	String result = null;
-	if (download != null ) {
-		result = "this ismy result part";
-		//List<ResultRow> result = MasterDatagrp.fetchResult()
-	}
-	String blog= request.getParameter("blog");
-	String blogChecked = "";
-	if (blog != null){ blogChecked = "checked";}
-
-	String selectedExam = request.getParameter("exam");
-
-	//once all the criteria are captured, then call a function from java and display the result
-	String result = null;
-	if (blog != null ) {
-		result = "this ismy result part";
-		//List<ResultRow> result = MasterDatagrp.fetchResult()
-	}
-	String qna = request.getParameter("qna");
-	String qnaChecked = "";
-	if (qna != null){ qnaChecked = "checked";}
-
-	String selectedExam = request.getParameter("exam");
-
-	//once all the criteria are captured, then call a function from java and display the result
-	String result = null;
-	if (qna != null ) {
-		result = "this ismy result part";
-		//List<ResultRow> result = MasterDatagrp.fetchResult()
-	}
-
-	
+		List<ResultRow> result = MasterDatagrp.fetchResult(book,course,download,blog,qna)
+	}	
 %>
 
 <!DOCTYPE html>
@@ -90,10 +49,10 @@
 		<div class="col-xs-2">Select Criteria </div>
 		<div class="col-xs-10">
 			<label><input type="checkbox" name="book" <%=bookChecked%>> Book </label>
-			<label><input type="checkbox" name="course"> Course </label>
-			<label><input type="checkbox" name="download"> Download </label>
-			<label><input type="checkbox" name="blog"> Blog </label>
-			<label><input type="checkbox" name="qna"> QnA </label>
+			<label><input type="checkbox" name="course"<%=courseChecked%>>Course </label>
+			<label><input type="checkbox" name="download"<%=downloadChecked%>> Download </label>
+			<label><input type="checkbox" name="blog"<%=blogChecked%>>Blog </label>
+			<label><input type="checkbox" name="qna"<%=qnaChecked%>>QnA </label>
 		</div>
 		<br/>
 		<div class="col-xs-2">Select Applicability</div>
@@ -126,7 +85,7 @@
 		 <option value="Select Group">Select Group</option>
 		 <%
 		 for (Group grp : gtemp) {
-		 if(selectedExam != null && selectedExam.equalsIgnoreCase(exam.getName()) )
+		 if(selectedGroup != null && selectedGroup.equalsIgnoreCase(grp.getName()) )
 		 %>
 		 	<option value="<%=grp.getName()%>" id="<%=grp.getId()%>"><%=grp.getName()%></option>
 		 <%
@@ -139,7 +98,8 @@
 		</div>
 		<div class="col-xs-3">
 			Subject
-		 <select>
+		 <select name="subject" id="subject">
+		 <option value="Select Subject">Select Subject</option>
 		 <%
 		 for (Subject subject : stemp) {
 		 %>
