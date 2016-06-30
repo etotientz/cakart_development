@@ -3,9 +3,9 @@
 
 <%
 	List<Exam> tmp =  MasterData.getExamList();
-	List<Group>gtemp=MasterDatagrp.getGrpList();
-	List<Subject>stemp=MasterDatasub.getSubList();
-	List<ResultRow> result = MasterDatagrp.fetchResult();
+	List<Group>gtemp=MasterData.getGrpList();
+	List<Subject>stemp=MasterData.getSubList();
+	//List<ResultRow> result = MasterData.fetchResult(String,String,String,String,String,String,String,String);
 
 	String book = request.getParameter("book");
 	String bookChecked = "";
@@ -28,10 +28,10 @@
 	String selectedSubject = request.getParameter("subject");
 
 	//once all the criteria are captured, then call a function from java and display the result
-	String result = null;
-	if (book != null || course!=null || download!=null ||blog!=null || qna!=null ) {
-		result = "this ismy result part";
-		List<ResultRow> result = MasterDatagrp.fetchResult(book,course,download,blog,qna)
+	List<ResultRow> results= null;
+	if (book != null || course!=null || download!=null ||blog!=null || qna!=null || selectedExam!=null || selectedGroup!=null || selectedSubject!=null) {
+		//result = "this ismy result part";
+		results = MasterData.fetchResult(book,course,download,blog,qna,selectedExam,selectedGroup,selectedSubject);
 	}	
 %>
 
@@ -50,7 +50,7 @@
 		<div class="col-xs-10">
 			<label><input type="checkbox" name="book" <%=bookChecked%>> Book </label>
 			<label><input type="checkbox" name="course"<%=courseChecked%>>Course </label>
-			<label><input type="checkbox" name="download"<%=downloadChecked%>> Download </label>
+			<label><input type="checkbox" name="download"<%=downloadChecked%>> download </label>
 			<label><input type="checkbox" name="blog"<%=blogChecked%>>Blog </label>
 			<label><input type="checkbox" name="qna"<%=qnaChecked%>>QnA </label>
 		</div>
@@ -121,9 +121,24 @@
 <br/><br/><br/>
 	<div class="col-xs-12">
 		<table>
+		<%
+			if (results != null && results.size() > 0 ) {
+				for (ResultRow rResult : results) {
+		%>
 			<tr>
-			<td> <%=result%></td>
+			<td> <%=rResult.getCookieID()%></td>
 			</tr>
+		<%
+				}//end-of-for
+			}//end-of-if
+			else{
+		%>
+			<tr>
+			<td> No Data Found in the criteria</td>
+			</tr>
+		<%
+			}
+		%>
 		</table>
 	</div>
 </form>
