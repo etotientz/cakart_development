@@ -1,0 +1,2 @@
+Follow this link to check filter methods:
+https://www.safaribooksonline.com/library/view/hbase-the-definitive/9781449314682/ch04.html
