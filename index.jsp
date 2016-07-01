@@ -64,13 +64,13 @@
 		 for (Exam exam : tmp) {
 		 	if(selectedExam != null && selectedExam.equalsIgnoreCase(exam.getName()) ){
 		 	 %>
-			 	<option value="<%=exam.getName()%>" id="<%=exam.getId()%>" selected><%=exam.getName()%></option>
+			 	<option value="<%=exam.getId()%>" id="<%=exam.getId()%>" selected><%=exam.getName()%></option>
 			 <%
 			
 		 	}
 		 	else{
 		 	 %>
-			 	<option value="<%=exam.getName()%>" id="<%=exam.getId()%>"><%=exam.getName()%></option>
+			 	<option value="<%=exam.getId()%>" id="<%=exam.getId()%>"><%=exam.getName()%></option>
 			 <%
 			
 		 	}
@@ -87,7 +87,7 @@
 		 for (Group grp : gtemp) {
 		 if(selectedGroup != null && selectedGroup.equalsIgnoreCase(grp.getName()) )
 		 %>
-		 	<option value="<%=grp.getName()%>" id="<%=grp.getId()%>"><%=grp.getName()%></option>
+		 	<option value="<%=grp.getId()%>" id="<%=grp.getId()%>"><%=grp.getName()%></option>
 		 <%
 			
 		 }
@@ -103,7 +103,7 @@
 		 <%
 		 for (Subject subject : stemp) {
 		 %>
-		 	<option value="<%=subject.getName()%>" id="<%=subject.getId()%>"><%=subject.getName()%></option>
+		 	<option value="<%=subject.getId()%>" id="<%=subject.getId()%>"><%=subject.getName()%></option>
 		 <%
 			
 		 }
@@ -119,14 +119,21 @@
 </div>
 <input type="submit" value="Submit" name="Fetch Result" />
 <br/><br/><br/>
+<%
+if (results != null && results.size() > 0 ) {
+out.println("The result size is :- "+ results.size());
+}
+%>
 	<div class="col-xs-12">
-		<table>
+		<table border = "1px">
 		<%
 			if (results != null && results.size() > 0 ) {
 				for (ResultRow rResult : results) {
 		%>
 			<tr>
 			<td> <%=rResult.getCookieID()%></td>
+			<td> <%=rResult.getDate()%></td>
+			<td> <%=rResult.getUrl()%></td>
 			</tr>
 		<%
 				}//end-of-for
