@@ -84,7 +84,7 @@ public class DatabaseManager {
 	}
 
 	public static List<ArrayList> executedQuery(String selectQuery){
-		System.out.println(selectQuery);
+		//System.out.println(selectQuery);
 		
 		Connection conn = null;
 		Statement stmt = null;
@@ -99,7 +99,7 @@ public class DatabaseManager {
 			meta = rs.getMetaData();
 			int columnCt = meta.getColumnCount();
 			
-			System.out.println(columnCt);
+			//System.out.println(columnCt);
 			while(rs.next()){
 				ArrayList tmp = new ArrayList();
 				for (int i = 1; i <= columnCt; i++) {
