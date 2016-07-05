@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="true">
+	<!-- An appender is an output destination,The log messages will be direct to stdout-->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+			value="%d{dd:MMM:HH:mm:ss,SSS} %X{identity} %-5p %c{1} %m%n" />
+				<!-- value="%d{DATE} %5p %c{1} - %m" /> -->
+		</layout>
+	</appender>
+
+	<!-- An appender is an output destination,The log messages will be direct to File-->
+
+	<appender name="FileInfo"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/analyticsLog/analytics.log" />
+		<param name="Threshold" value="INFO" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="100" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{dd:MMM:HH:mm:ss} %X{identity} %-5p %c{1} %m%n" />
+		</layout>
+	</appender>
+	
+
+
+	
+	<!-- the root category -->
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="FileInfo"/>
+	</root>
+</log4j:configuration>
